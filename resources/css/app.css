@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
+
+
+
+
+/* Smooth dark mode */
+* {
+    @apply transition-colors duration-300;
+}
+
+/* Default card style */
+.card {
+    @apply bg-white dark:bg-slate-800 shadow-md rounded-xl p-6;
+}
+
+/* Default table style */
+.table-header {
+    @apply bg-gray-100 dark:bg-slate-700;
+}
