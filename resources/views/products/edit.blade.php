@@ -3,7 +3,8 @@
 @section('title', 'Edit Product')
 
 @section('content')
-<div class="max-w-3xl mx-auto bg-black p-6 rounded shadow">
+<!--<div class="max-w-3xl mx-auto bg-black p-6 rounded shadow">-->
+    <div >
     <h1 class="text-2xl font-bold mb-6">Edit Product</h1>
 
     {{-- Display validation errors --}}
@@ -64,18 +65,18 @@
 
         {{-- Price --}}
         <div class="mb-4">
-            <label class="block font-medium mb-1">Price</label>
-            <input type="number" name="price" step="0.01"
-                   class="w-full border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 text-black"
-                   value="{{ old('price', $product->price) }}" required>
-        </div>
+    <label class="block font-medium mb-1">Price</label>
+    <p class="bg-gray-200 p-2 rounded text-black">
+        {{ number_format($product->price, 2) }}
+    </p>
+</div>
 
         {{-- Stock Quantity --}}
         <div class="mb-4">
             <label class="block font-medium mb-1">Stock Quantity</label>
-            <input type="number" name="stock_quantity"
-                   class="w-full border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200 text-black"
-                   value="{{ old('stock_quantity', $product->stock_quantity) }}" required>
+            <input type="number"
+       class="w-full bg-gray-200 border-gray-300 rounded px-3 py-2 text-black cursor-not-allowed"
+       value="{{ $product->stock_quantity }}" readonly>
         </div>
 
         {{-- Current Image --}}

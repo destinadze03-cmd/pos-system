@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'usertype',
     ];
 
     /**
@@ -42,4 +43,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Helper method to check user type
+public function isAdmin()
+{
+    return $this->usertype === 'admin';
+}
+
+public function isCashier()
+{
+    return $this->usertype === 'cashier';
+}
 }

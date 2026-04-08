@@ -1,111 +1,94 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\SaleController;
-
-
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\MessageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Authenticated routes
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::middleware('auth')->group(function () {
+    // Dashboard for both Admin and Cashier
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Admin-only routes
+    Route::middleware(['role:admin'])->group(function () {
+        // Users
+        Route::resource('users', UserController::class);
 
-//dashboard
- 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');    
-    
+        // Categories
+        Route::resource('categories', CategoryController::class);
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/category/edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');
 
-// Categories  
-Route::resource('categories', CategoryController::class);       
-// Products 
-Route::get('products', [ProductController::class,'index'])->name('products.index');
-//to create new product
-Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-   //to store created product
-Route::post('/products', [ProductController::class, 'store'])->name('products.store'); // <--- important
-//create category
-Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
-//To store categories
-Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-//to edit product
-Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-//To Update prouduct
-Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-//To Delete Product
-Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-//To show a particular sale destail
-Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
-// showrecept
-Route::get('/receipt/{receipt}', [SaleController::class, 'receipt'])->name('receipt.show');
+        // Products
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+        Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+    });
 
-//pos index
-Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
-Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
-// barcode route
-Route::get('/pos/product-by-barcode/{barcode}', [PosController::class, 'getProductByBarcode']);
+    // POS routes - accessible by both roles
+    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
+    Route::post('/pos/add-to-cart', [POSController::class, 'addToCart'])->name('pos.add-to-cart');
+    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
+    Route::get('/pos/product-by-barcode/{barcode}', [POSController::class, 'getProductByBarcode']);
 
-//print report
-Route::get('/Report/print', [SaleController::class, 'print'])->name('Report.print');
-//sale pdf
-Route::get('/sales/pdf', [SaleController::class, 'exportPdf'])->name('sales.pdf');
+    // Sales routes - accessible by both roles
+    Route::resource('sales', SaleController::class)->only(['index', 'show']);
+    Route::get('/receipt/{sale}', [SaleController::class, 'receipt'])->name('sales.receipt');
+    Route::get('/sales/pdf', [SaleController::class, 'exportPdf'])->name('sales.pdf');
+    Route::get('/Report/print', [SaleController::class, 'print'])->name('Report.print');
 
-//category index
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    // Purchases routes - accessible by both roles
+    Route::resource('purchases', PurchaseController::class);
+    Route::post('/purchases/add-stock/{id}', [PurchaseController::class, 'addStock'])->name('purchases.addStock');
+
+Route::post('/purchases/send-to-products/{id}', [PurchaseController::class, 'sendToProducts'])
+    ->name('purchases.sendToProducts');
 
 
-// edit category
-Route::get('category/edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');     
 
-//search a product
-Route::get('products/search', [ProductController::class, 'search'])->name('products.search');     
-// POS 
-Route::get('/pos', [POSController::class, 'index'])->name('pos.index');  
-Route::post('/pos/add-to-cart', [POSController::class, 'addToCart'])->name('pos.add-to-cart');  
-Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');      
-// Sales  
-Route::resource('sales', SaleController::class)->only(['index', 'show']); 
-Route::get('/receipt/{sale}', [SaleController::class, 'receipt'])->name('sales.receipt');
+
+Route::get('/stock-history', [StockMovementController::class, 'index'])->name('stock.history');
+
+Route::post('/messages', [MessageController::class,'store'])->name('messages.store');
+
+
+
+
+
+
+
+
+
+Route::get('/receipt/{id}', [SalesController::class, 'show'])->name('receipt.show');
 });
 
-//To show a particular product destail
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -10,7 +10,12 @@
     <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
         Categories List
     </h1>
-
+<div class="flex justify-between mb-4 items-center">
+   
+    <a href="{{ route('categories.create') }}" class="bg-blue-600 text-blue px-4 py-2 rounded hover:bg-blue-700">
+        Add Category
+    </a>
+</div>
     <!-- Table -->
     <div class="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
 

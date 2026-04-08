@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\SaleItem;
 
 class ProductController extends Controller
 {
@@ -14,7 +15,8 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all(); // Fetch all products
-        return view('products.index', compact('products'));
+     $categories = Category::all(); 
+        return view('products.index', compact('products','categories'));
     }
 
     /**
@@ -30,34 +32,30 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
-            'barcode' => 'nullable|string|unique:products,barcode',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:products,name',
+        'category_id' => 'required|exists:categories,id',
+        'barcode' => 'nullable|string|max:255',
+        'price' => 'required|numeric|min:0',
+        'stock_quantity' => 'required|integer|min:0',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+    ], [
+        'name.unique' => 'Product already exists.'
+    ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
+    Product::create([
+        'name' => $request->name,
+        'category_id' => $request->category_id,
+        'barcode' => $request->barcode,
+        'price' => $request->price,
+        'stock_quantity' => $request->stock_quantity,
+        'image' => $request->image
+    ]);
 
-        Product::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'stock_quantity' => $request->stock_quantity,
-            'barcode' => $request->barcode,
-            'description' => $request->description,
-            'image' => $imagePath,
-        ]);
-
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
-    }
+    return redirect()->route('products.index')
+                     ->with('success', 'Product created successfully.');
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -76,8 +74,8 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            //'price' => 'required|numeric|min:0',
+            //'stock_quantity' => 'required|integer|min:0',
             'barcode' => 'nullable|string|unique:products,barcode,' . $product->id,
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
@@ -98,20 +96,33 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
-    {
-        // Optionally delete image from storage here
-        if ($product->image) {
-            \Storage::disk('public')->delete($product->image);
-        }
 
-        $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+public function destroy(Product $product)
+{
+    // Check if product has been sold
+    $hasSales = SaleItem::where('product_id', $product->id)->exists();
+
+    if ($hasSales) {
+        return redirect()->route('products.index')
+            ->with('error', 'This product has been sold and cannot be deleted.');
     }
+
+    $product->delete();
+
+    return redirect()->route('products.index')
+        ->with('success', 'Product deleted successfully.');
+}
 
     public function show(Product $product)
 {
     return view('products.show', compact('product'));
 }
+
+
+
+
+
 }
+
+
