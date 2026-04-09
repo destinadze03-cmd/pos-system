@@ -20,7 +20,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-         return view('categories.create');
+        $categories = Category::latest()->get();
+         return view('categories.create', compact('categories'));
     }
 
     /**
@@ -35,7 +36,7 @@ class CategoryController extends Controller
 
     Category::create($request->all());
 
-    return redirect()->route('products.create')->with('success', 'Category created successfully!');
+    return redirect()->route('categories.index')->with('success', 'Category created successfully!');
     }
 
     /**

@@ -3,10 +3,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\RecordsStockMovements;
 
 class Product extends Model
 {
     use HasFactory;
+    use RecordsStockMovements;
 
     protected $fillable = [
         'name', 'category_id', 'price', 'stock_quantity', 'barcode', 'description','image',

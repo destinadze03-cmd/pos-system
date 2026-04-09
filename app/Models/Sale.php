@@ -3,10 +3,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\RecordsStockMovements;
+
+
 
 class Sale extends Model
 {
     use HasFactory;
+use RecordsStockMovements;
 
     protected $fillable = [
         'user_id', 'total_amount', 'amount_paid', 'change_amount', 'sale_date'

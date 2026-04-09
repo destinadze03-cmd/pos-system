@@ -31,13 +31,7 @@
 
         @if(auth()->check() && auth()->user()->usertype === 'admin')
             <!-- Admin-only links -->
-            <a href="{{ route('users.index') }}"
-               class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
-               {{ request()->routeIs('users.*') 
-                  ? 'bg-green-600 text-white shadow-md' 
-                  : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
-                👥 User Management
-            </a>
+            
 
             <a href="{{ route('categories.index') }}"
                class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
@@ -47,7 +41,35 @@
                 🗂️ Categories
             </a>
 
-           {{-- Sidebar.blade.php --}}
+          
+
+            <a href="{{ route('products.index') }}"
+               class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
+               {{ request()->routeIs('products.*') 
+                  ? 'bg-green-600 text-white shadow-md' 
+                  : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
+                📦 Products
+            </a>
+        @endif
+
+        <!-- Links available for both admin & cashier -->
+        <a href="{{ route('pos.index') }}"
+           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
+           {{ request()->routeIs('pos.*') 
+              ? 'bg-green-600 text-white shadow-md' 
+              : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
+            💳 POS Terminal
+        </a>
+
+        <a href="{{ route('sales.index') }}"
+           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
+           {{ request()->routeIs('sales.*') 
+              ? 'bg-green-600 text-white shadow-md' 
+              : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
+            📈 Sales History
+        </a>
+
+         {{-- Sidebar.blade.php --}}
 <div class="space-y-2">
 
     {{-- Purchases Dropdown --}}
@@ -84,31 +106,13 @@
 
 </div>
 
-            <a href="{{ route('products.index') }}"
+        <a href="{{ route('users.index') }}"
                class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
-               {{ request()->routeIs('products.*') 
+               {{ request()->routeIs('users.*') 
                   ? 'bg-green-600 text-white shadow-md' 
                   : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
-                📦 Products
+                👥 User Management
             </a>
-        @endif
-
-        <!-- Links available for both admin & cashier -->
-        <a href="{{ route('pos.index') }}"
-           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
-           {{ request()->routeIs('pos.*') 
-              ? 'bg-green-600 text-white shadow-md' 
-              : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
-            💳 POS Terminal
-        </a>
-
-        <a href="{{ route('sales.index') }}"
-           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition
-           {{ request()->routeIs('sales.*') 
-              ? 'bg-green-600 text-white shadow-md' 
-              : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800' }}">
-            📈 Sales History
-        </a>
     </nav>
 
     <!-- Footer Actions -->

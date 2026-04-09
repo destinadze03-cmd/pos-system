@@ -60,22 +60,50 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($movements as $movement)
-            <tr class="hover:bg-gray- dark:hover:bg-slate-700 text-black">
-                <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                <td class="px-4 py-2 border-b">{{ $movement->product->name ?? '-' }}</td>
-                <td class="px-4 py-2 border-b">{{ ucfirst($movement->type) }}</td>
-                <td class="px-4 py-2 border-b">{{ $movement->quantity }}</td>
-                <td class="px-4 py-2 border-b">{{ $movement->reference_id ?? '-' }}</td>
-                <td class="px-4 py-2 border-b">{{ $movement->user->name ?? 'System' }}</td>
-                <td class="px-4 py-2 border-b">{{ $movement->created_at->format('d M Y H:i') }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="7" class="text-center py-4 text-gray-500">No stock movements found.</td>
-            </tr>
-            @endforelse
-        </tbody>
+    @forelse($movements as $movement)
+    <tr class="hover:bg-gray-100 dark:hover:bg-slate-700 text-black"> {{-- Fixed text color to white for dark bg --}}
+        <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
+        
+        {{-- Smart Product/Entity Column --}}
+        <td class="px-4 py-2 border-b">
+            @if($movement->type == 'product')
+                <span class="text-blue-400">Product:</span> {{ $movement->movable->name ?? 'N/A' }}
+            @elseif($movement->type == 'category')
+                <span class="text-green-400">Category:</span> {{ $movement->movable->name ?? 'N/A' }}
+            @elseif($movement->type == 'sale' || $movement->type == 'sale_item')
+                <span class="text-yellow-400">Sold:</span> {{ $movement->product->name ?? 'Sale Item' }}
+            @else
+                {{ $movement->product->name ?? '-' }}
+            @endif
+        </td>
+
+        <td class="px-4 py-2 border-b">
+            <span class="px-2 py-1 rounded text-xs font-bold 
+                {{ $movement->type == 'purchase' ? 'bg-green-900 text-green-200' : '' }}
+                {{ $movement->type == 'sale' ? 'bg-blue-900 text-blue-200' : '' }}
+                {{ $movement->type == 'delete' ? 'bg-red-900 text-red-200' : '' }}
+                {{ $movement->type == 'create' ? 'bg-red-900 text-red-200' : '' }}
+                {{ $movement->type == 'Adjustment' ? 'bg-red-900 text-red-200' : '' }}">
+                 
+                {{ strtoupper($movement->type) }}
+            </span>
+        </td>
+
+        <td class="px-4 py-2 border-b {{ $movement->quantity < 0 ? 'text-red-400' : 'text-green-400' }}">
+            {{ $movement->quantity > 0 ? '+' : '' }}{{ $movement->quantity }}
+        </td>
+
+        <td class="px-4 py-2 border-b text-black">{{ $movement->reference_id ?? '-' }}</td>
+        <td class="px-4 py-2 border-b">{{ $movement->user->name ?? 'System' }}</td>
+        <td class="px-4 py-2 border-b text-sm">{{ $movement->created_at->format('d M Y H:i') }}</td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="7" class="text-center py-4 text-gray-500">No logs found for the selected filters.</td>
+    </tr>
+    @endforelse
+</tbody>
+
     </table>
 </div>
 @endsection

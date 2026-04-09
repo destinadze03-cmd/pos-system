@@ -65,6 +65,17 @@
                     Change: <strong id="change-amount">FCFA 0.00</strong>
                 </p>
 
+                 <label for="payment_method">Select Payment Method:</label>
+<select name="payment_method" id="payment_method" required>
+    <option value="">-- Choose Payment Method --</option>
+    <option value="cash">Cash</option>
+    <option value="credit_card">Credit Card</option>
+    <option value="bank_transfer">Bank Transfer</option>
+    <option value="mobile_money">Mobile Money</option>
+    <option value="paypal">PayPal</option>
+    <option value="cheque">Cheque</option>
+</select>
+
                 <input type="number"
                        id="amount-paid"
                        name="amount_paid"

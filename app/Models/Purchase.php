@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\RecordsStockMovements;
 
 class Purchase extends Model
 {
     use HasFactory;
 
+use RecordsStockMovements;
     protected $fillable = [
         'product_name',
         'quantity',
