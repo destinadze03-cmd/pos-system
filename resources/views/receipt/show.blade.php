@@ -57,7 +57,12 @@
         <div class="flex justify-between">
             <span>Amount Paid:</span>
             <span>FCFA {{ number_format($sale->amount_paid, 0) }}</span>
+        </div> <div class="flex justify-between">
+            <span>paymen method:</span>
+            <span>{{ $sale->payment_method }}</span>
         </div>
+
+
 
         <div class="flex justify-between font-bold text-lg">
             <span>Balance:</span>

@@ -28,6 +28,7 @@
                 <th class="p-2 border">Product</th>
                 <th class="p-2 border">Qty</th>
                 <th class="p-2 border">Unit Price</th>
+                <th class="p-2 border">Payment Method</th>
                 <th class="p-2 border">Subtotal</th>
             </tr>
         </thead>
@@ -40,6 +41,10 @@
                 <td class="p-2 border">{{ $item->quantity }}</td>
                 <td class="p-2 border">
                     FCFA {{ number_format($item->unit_price, 2) }}
+                </td>
+
+                <td class="p-2 border">
+                    {{ $sale->payment_method }}
                 </td>
                 <td class="p-2 border">
                     FCFA {{ number_format($item->subtotal, 2) }}

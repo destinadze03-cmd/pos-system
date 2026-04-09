@@ -60,8 +60,10 @@
             <th class="px-4 py-2">Number</th>
             <th class="px-4 py-2">Product Name</th>
             <th class="px-4 py-2">Total</th>
+            <th class="px-4 py-2">Payment Method</th>
             <th class="px-4 py-2">Date</th>
-            <th class="px-4 py-2">Actions</th>
+            <th class="px-4 py-2">Actions</th>\
+              <th class="px-4 py-2">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -76,12 +78,17 @@
         @endif</td>
 
             <td class="px-4 py-2">FCFA {{ number_format($sale->total_amount, 2) }}</td>
+            <td class="px-4 py-2">{{$sale->payment_method }}</td>
             <td class="px-4 py-2">{{ $sale->created_at->format('d M Y, H:i') }}</td>
             <td class="px-4 py-2">
           <button class="bg-green-600 hover:bg-green-700 
                text-white font-semibold 
                px-4 py-2 rounded-lg transition">  <a href="{{ route('sales.show', $sale) }}" class="text-blue-600 hover:underline">View</a></button>
             </td>
+           <td> <button type="submit"
+            class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded">
+            Delete
+        </button></td>
         </tr>
         @endforeach
     </tbody>

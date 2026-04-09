@@ -22,7 +22,8 @@ public function checkout(Request $request)
 {
     $request->validate([
         'amount_paid' => 'required|numeric|min:0',
-        'products' => 'required|array'
+        'products' => 'required|array',
+        'payment_method' => 'required'
     ]);
 
     DB::beginTransaction();
@@ -37,11 +38,13 @@ public function checkout(Request $request)
 
         // 2️⃣ Create sale
         $sale = Sale::create([
+            
             'user_id' => Auth::id(),
             'total_amount' => $total,
             'amount_paid' => $request->amount_paid,
             'change_amount' => $request->amount_paid - $total,
             'sale_date' => now(),
+            'payment_method' => $request->payment_method,
         ]);
 
         // 3️⃣ Create sale items + reduce stock

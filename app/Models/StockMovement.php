@@ -6,20 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class StockMovement extends Model
 {
-   
-    protected $fillable = ['product_id', 'quantity', 'type', 'reference_id', 'user_id'];
+    protected $fillable = [
+        'product_id',
+        'quantity',
+        'type',
+        'reference_id',
+        'user_id',
+        'action', // if you added action column in trait
+    ];
 
     /**
-     * Get the parent model (Product, Sale, Purchase, etc.)
+     * Polymorphic parent (Product, SaleItem, Purchase, etc.)
      */
     public function movable()
     {
-        // This maps your 'type' string to the actual Model class
+        // Temporary fix for old lowercase records
+        if ($this->type === 'saleitem') {
+            $this->type = 'App\\Models\\SaleItem';
+        }
+
         return $this->morphTo(null, 'type', 'reference_id')->withDefault();
     }
 
     /**
-     * Relationship to the Product (if applicable)
+     * Product relationship
      */
     public function product()
     {
@@ -27,7 +37,7 @@ class StockMovement extends Model
     }
 
     /**
-     * Relationship to the User who made the change
+     * User who performed the action
      */
     public function user()
     {

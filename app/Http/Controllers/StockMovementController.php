@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\User;
 
 
+
 class StockMovementController extends Controller
 {
     public function index(Request $request)

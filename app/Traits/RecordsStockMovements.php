@@ -29,7 +29,7 @@ protected static function logMovement($model, $event)
         'user_id'      => auth()->id(),
         'action'       => $event,
         'reference_id' => $model->id,
-        'type'         => strtolower(class_basename($model)),
+        'type'         => get_class($model), // ✅ store full class name
         'quantity'     => $model->quantity ?? 0,
         'product_id'   => $productId, // Now works because database allows NULL
     ]);
