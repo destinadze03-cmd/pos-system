@@ -13,13 +13,13 @@
 
 <div class="max-w-7xl mx-auto p-6">
 
-    <!-- PAGE HEADER -->
+    <!-- PAGE HEADER --
     <div class="flex justify-between mb-6 items-center">
         <h2 class="text-2xl font-bold">Products Management</h2>
         <a href="{{ route('products.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             Add Product Page
         </a>
-    </div>
+    </div>-->
 
 
     <!-- ADD PRODUCT CARD -->

@@ -44,7 +44,7 @@ class PurchaseController extends Controller
         $product = Product::firstOrCreate(
             ['name' => $request->product_name],
             [
-                'category_id' => 2, // change if needed
+                'category_id' => $request->category_id,// change if needed
                 'price' => $request->price,
                 'stock_quantity' => 0
             ]

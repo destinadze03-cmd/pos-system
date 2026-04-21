@@ -32,43 +32,46 @@ class SaleController extends Controller
 
     // Store a new sale
     public function store(Request $request)
-    {
-        $request->validate([
-            'amount_paid' => 'required|numeric|min:0',
-            'products' => 'required|array',
-        ]);
+{
+    $request->validate([
+        'amount_paid' => 'required|numeric|min:0',
+        'products' => 'required|array',
+    ]);
 
-        $sale = Sale::create([
-            'total' => collect($request->products)->sum(fn($p) => $p['price'] * $p['quantity']),
-            'amount_paid' => $request->amount_paid,
-            'user_id' => auth()->id(),
-        ]);
+    $sale = Sale::create([
+        'total' => collect($request->products)
+            ->sum(fn($p) => $p['price'] * $p['quantity']),
+        'amount_paid' => $request->amount_paid,
+        'user_id' => auth()->id(),
+    ]);
 
-        foreach ($request->products as $id => $data) {
-            $product = Product::findOrFail($id);
-            $quantitySold = $data['quantity'];
+    foreach ($request->products as $id => $data) {
 
-            // Attach product to sale
-            $sale->products()->attach($id, [
-                'quantity' => $quantitySold,
-                'price' => $data['price']
-            ]);
+    $product = Product::findOrFail($id);
+    $quantitySold = $data['quantity'];
 
-            // Decrement stock
-            $product->decrement('stock_quantity', $quantitySold);
+    $sale->products()->attach($id, [
+        'quantity' => $quantitySold,
+        'price' => $data['price']
+    ]);
 
-            // Record stock movement
-            StockMovement::create([
-                'product_id' => $product->id,
-                'quantity' => -$quantitySold, // negative because stock decreased
-                'type' => 'sale',
-                'reference_id' => $sale->id,
-                'user_id' => auth()->id(),
-            ]);
-        }
+    // reduce stock
+    $product->decrement('stock_quantity', $quantitySold);
 
-        return redirect()->route('sales.index')->with('success', 'Sale completed and stock updated.');
-    }
+    // record movement
+    StockMovement::create([
+        'product_id' => $product->id,
+        'quantity' => -$quantitySold,
+        'type' => \App\Models\Sale::class,
+        'reference_id' => $sale->id,
+        'user_id' => auth()->id(),
+        'action' => 'sold',
+    ]);
+}
+
+    return redirect()->route('sales.index')
+        ->with('success', 'Sale completed and stock updated.');
+}
 
     // Show sale details
     public function show(Sale $sale)
@@ -118,28 +121,32 @@ class SaleController extends Controller
     }
 
     // Delete a sale
-    public function destroy(Sale $sale)
-    {
-        foreach ($sale->products as $product) {
-            $quantity = $product->pivot->quantity;
+  
 
-            // Restore stock
-            $product->increment('stock_quantity', $quantity);
+public function destroy(Sale $sale)
+{
+    foreach ($sale->products as $product) {
+        $quantity = $product->pivot->quantity;
 
-            // Record stock movement
-            StockMovement::create([
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'type' => 'delete',
-                'reference_id' => $sale->id,
-                'user_id' => auth()->id(),
-            ]);
-        }
+        // ✅ Restore stock
+        $product->increment('stock_quantity', $quantity);
 
-        $sale->delete();
-
-        return redirect()->route('sales.index')->with('success', 'Sale deleted and stock restored.');
+        // ✅ Record movement
+        StockMovement::create([
+            'product_id' => $product->id,
+          'quantity' => $quantity, // ✅ +23
+            'type' => \App\Models\Sale::class,
+            'reference_id' => $sale->id,
+            'user_id' => auth()->id(),
+            'action' => 'Deleted', // ✅ better than 'deleted'
+        ]);
     }
+
+    $sale->delete();
+
+    return redirect()->route('sales.index')
+        ->with('success', 'Sale deleted and stock restored.');
+}
 
     // Sale receipt
     public function receipt($sale)
@@ -147,4 +154,6 @@ class SaleController extends Controller
         $sale = Sale::with('products')->findOrFail($sale);
         return view('receipt.show', compact('sale'));
     }
+
+    
 }

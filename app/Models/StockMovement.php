@@ -20,10 +20,10 @@ class StockMovement extends Model
      */
     public function movable()
     {
-        // Temporary fix for old lowercase records
+        /* Temporary fix for old lowercase records
         if ($this->type === 'saleitem') {
             $this->type = 'App\\Models\\SaleItem';
-        }
+        }*/
 
         return $this->morphTo(null, 'type', 'reference_id')->withDefault();
     }

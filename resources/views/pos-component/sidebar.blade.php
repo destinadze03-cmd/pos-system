@@ -96,10 +96,10 @@
            Add Purchase
         </a>-->
 
-        <a href="{{ route('stock.history') }}"
+        <a href="{{ route('activity.log') }}"
            class="block px-4 py-2 text-sm rounded hover:bg-gray-200 dark:hover:bg-slate-700
-           {{ request()->routeIs('stock.history') ? 'bg-green-600 text-white' : 'text-gray-600 dark:text-slate-300' }}">
-           Stock History
+           {{ request()->routeIs('activity.log') ? 'bg-green-600 text-white' : 'text-gray-600 dark:text-slate-300' }}">
+           Activity Log
         </a>
     </div>
 

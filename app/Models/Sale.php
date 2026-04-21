@@ -4,16 +4,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\RecordsStockMovements;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Sale extends Model
 {
     use HasFactory;
-use RecordsStockMovements;
+
+ use SoftDeletes;
 
     protected $fillable = [
-        'user_id', 'total_amount', 'amount_paid', 'change_amount', 'sale_date','payment_method'
+        'user_id', 'total_amount', 'amount_paid', 'change_amount', 'sale_date','payment_method','action'
     ];
 
     protected $casts = [

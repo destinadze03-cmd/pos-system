@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\SaleItem;
+use App\Models\StockMovement;
 
 class ProductController extends Controller
 {
@@ -44,14 +45,23 @@ class ProductController extends Controller
         'name.unique' => 'Product already exists.'
     ]);
 
-    Product::create([
-        'name' => $request->name,
-        'category_id' => $request->category_id,
-        'barcode' => $request->barcode,
-        'price' => $request->price,
-        'stock_quantity' => $request->stock_quantity,
-        'image' => $request->image
-    ]);
+    $product = Product::create([
+    'name' => $request->name,
+    'category_id' => $request->category_id,
+    'barcode' => $request->barcode,
+    'price' => $request->price,
+    'stock_quantity' => $request->stock_quantity,
+    'image' => $request->image
+]);
+
+StockMovement::create([
+    'product_id' => $product->id,
+    'quantity' => $product->stock_quantity,
+    'type' => \App\Models\Product::class,
+    'reference_id' => $product->id,
+    'user_id' => auth()->id(),
+    'action' => 'created',
+]);
 
     return redirect()->route('products.index')
                      ->with('success', 'Product created successfully.');
@@ -100,13 +110,21 @@ class ProductController extends Controller
 
 public function destroy(Product $product)
 {
-    // Check if product has been sold
     $hasSales = SaleItem::where('product_id', $product->id)->exists();
 
     if ($hasSales) {
         return redirect()->route('products.index')
             ->with('error', 'This product has been sold and cannot be deleted.');
     }
+
+    StockMovement::create([
+        'product_id' => $product->id,
+        'quantity' => -$product->stock_quantity,
+        'type' => \App\Models\Product::class,
+        'reference_id' => $product->id,
+        'user_id' => auth()->id(),
+        'action' => 'deleted',
+    ]);
 
     $product->delete();
 

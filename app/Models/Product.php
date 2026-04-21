@@ -8,7 +8,7 @@ use App\Traits\RecordsStockMovements;
 class Product extends Model
 {
     use HasFactory;
-    use RecordsStockMovements;
+  // use RecordsStockMovements;
 
     protected $fillable = [
         'name', 'category_id', 'price', 'stock_quantity', 'barcode', 'description','image',

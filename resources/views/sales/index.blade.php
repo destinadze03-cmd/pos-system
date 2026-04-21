@@ -85,14 +85,24 @@
                text-white font-semibold 
                px-4 py-2 rounded-lg transition">  <a href="{{ route('sales.show', $sale) }}" class="text-blue-600 hover:underline">View</a></button>
             </td>
-           <td> <button type="submit"
-            class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded">
-            Delete
-        </button></td>
+           <td>
+   <form method="POST" action="{{ route('sales.destroy', $sale) }}">
+    @csrf
+    @method('DELETE')
+
+    <button type="submit"
+        onclick="return confirm('⚠️ Are you sure you want to delete this sale? This will restore stock.')"
+        class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded">
+        Delete
+    </button>
+</form>
+</td>
         </tr>
         @endforeach
     </tbody>
 </table>
 
-
 @endsection
+
+
+

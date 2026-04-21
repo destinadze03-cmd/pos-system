@@ -18,5 +18,8 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    
+    public function stockMovements()
+{
+    return $this->morphMany(StockMovement::class, 'movable', 'type', 'reference_id');
+}
 }

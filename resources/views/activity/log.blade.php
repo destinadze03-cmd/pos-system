@@ -1,11 +1,11 @@
 {{-- resources/views/stock/history.blade.php --}}
 @extends('layouts.pos')
 
-@section('title', 'Stock History')
+@section('title', 'Activity Log ')
 
 @section('content')
 <div class="max-w-7xl mx-auto p-6 bg-black dark:bg-slate-800 rounded shadow">
-    <h2 class="text-xl font-semibold text-gray-100 mb-4">Inventory Audit Dashboard</h2>
+    <h2 class="text-xl font-semibold text-gray-100 mb-4">Inventry log Dashboard</h2>
 
     {{-- Filters --}}
     <form method="GET" class="mb-4 flex gap-2 flex-wrap items-end">
@@ -53,7 +53,8 @@
             <tr class="bg-gray-100 dark:bg-slate-700 text-black bg-blue">
                 <th class="px-4 py-2 border-b">Number</th>
                 <th class="px-4 py-2 border-b">Product name</th>
-                <th class="px-4 py-2 border-b">Type</th>
+                 <th class="px-4 py-2 border-b">Type</th>
+                <th class="px-4 py-2 border-b">Action</th>
                 <th class="px-4 py-2 border-b">Quantity</th>
                 <th class="px-4 py-2 border-b">Reference ID</th>
                 <th class="px-4 py-2 border-b">User</th>
@@ -78,12 +79,24 @@
         @endif
     </td>
 
-    {{-- Action / Type --}}
+    {{--  / Type --}}
     <td class="px-4 py-2 border-b">
         @if(str_contains(strtolower($movement->type), 'sale'))
-            <span class="text-yellow-400">Sold</span>
+            <span class="text-yellow-400">Sales</span>
         @elseif($movement->type == 'purchase')
             <span class="text-green-400">Purchased</span>
+
+
+
+ @elseif($movement->type == 'product')
+            <span class="text-green-400">Products</span>
+
+ @elseif($movement->type == 'caregory')
+            <span class="text-green-400">Category</span>
+
+
+
+
         @elseif($movement->type == 'delete')
             <span class="text-red-400">Deleted</span>
         @elseif($movement->type == 'update')
@@ -92,6 +105,25 @@
             <span class="text-gray-400">{{ ucfirst($movement->type) }}</span>
         @endif
     </td>
+
+
+
+
+
+    {{-- Action / Type --}}
+   <td>
+    @if(strtolower($movement->action) == 'deleted')
+        <span class="text-red-400">Deleted</span>
+    @elseif(strtolower($movement->action) == 'created')
+        <span class="text-green-400">Created</span>
+    @elseif(strtolower($movement->action) == 'restored')
+        <span class="text-blue-400">Restored</span>
+    @elseif(strtolower($movement->action) == 'sold')
+        <span class="text-yellow-400">Sold</span>
+    @else
+        {{ ucfirst($movement->action) }}
+    @endif
+</td>
 
     {{-- Quantity --}}
     <td class="px-4 py-2 border-b {{ $movement->quantity < 0 ? 'text-red-400' : 'text-green-400' }}">

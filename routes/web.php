@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
         Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+        Route::delete('/saless/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
     });
 
     // POS routes - accessible by both roles
@@ -76,7 +77,7 @@ Route::post('/purchases/send-to-products/{id}', [PurchaseController::class, 'sen
 
 
 
-Route::get('/stock-history', [StockMovementController::class, 'index'])->name('stock.history');
+Route::get('/activity-log', [StockMovementController::class, 'index'])->name('activity.log');
 
 Route::post('/messages', [MessageController::class,'store'])->name('messages.store');
 
